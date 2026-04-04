@@ -16,10 +16,10 @@ inc_dirs  = -IH
 #cflags stuff
 
 ifeq ($(DEBUG),0)
-extra_c_flags = -DNDEBUG -O2 -funsigned-char -Wwrite-strings
+extra_c_flags = -DNDEBUG -O2 -static
 OUTD=GccUnixR
 else
-extra_c_flags = -DDEBUG_OUT -g
+extra_c_flags = -DDEBUG_OUT -g -static
 OUTD=GccUnixD
 endif
 
@@ -31,6 +31,7 @@ c_flags =-D __UNIX__ $(extra_c_flags)
 
 #From CLANG 11+, default has changed from allowing global variables to be defined in the headers (-fcommon) to not allowing it (-fno-common)."   USE: make CC="clang -fcommon" -f gccLinux64.mak
 CC = gcc
+LDFLAGS = -static
 
 .SUFFIXES:
 .SUFFIXES: .c .o
