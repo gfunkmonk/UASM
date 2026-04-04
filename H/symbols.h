@@ -609,4 +609,6 @@ extern  void            SymClearLocal( void );
 extern  void            SymSetLocal( struct asym * );
 extern  void            SymGetLocal( struct asym * );
 
+extern  void            SymSimd( struct dsym * );
+
 #endif

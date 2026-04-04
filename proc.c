@@ -188,6 +188,18 @@ static void delphi_return(struct dsym *, char *);
 
 static void check_proc_fpo(struct proc_info *);
 
+/* sysvcall-compatible wrappers that accept the extra vecused parameter */
+static int ms32_pcheck_sysv(struct dsym *proc, struct dsym *paranode, int *used, int *vecused)
+{
+    return ms32_pcheck(proc, paranode, used);
+}
+#if OWFC_SUPPORT
+static int watc_pcheck_sysv(struct dsym *proc, struct dsym *paranode, int *used, int *vecused)
+{
+    return watc_pcheck(proc, paranode, used);
+}
+#endif
+
 /* table of fastcall types.
 * must match order of enum fastcall_type!
 * also see table in mangle.c!
@@ -214,9 +226,9 @@ static const struct vectorcall_conv vectorcall_tab[] = {
 };
 
 static const struct sysvcall_conv sysvcall_tab[] = {
-	{ ms32_pcheck, ms32_return },  /* FCT_MSC */
+	{ ms32_pcheck_sysv, ms32_return },  /* FCT_MSC */
 #if OWFC_SUPPORT		
-	{ watc_pcheck, watc_return },  /* FCT_WATCOMC */
+	{ watc_pcheck_sysv, watc_return },  /* FCT_WATCOMC */
 #endif		
 #if SYSV_SUPPORT		
 	{ sysv_pcheck, sysv_return }   /* FCT_WIN64 / SYSTEMV */
