@@ -49,6 +49,7 @@
 #endif
 #define _ltoa   ltoa
 #define _strupr strupr
+char *strupr( char *str );
 
 #elif defined(__POCC__)
 
@@ -741,7 +742,7 @@ struct module_vars {
     char                *imp_prefix;
     FILE                *curr_file[NUM_FILE_TYPES];  /* ASM, ERR, OBJ and LST */
     char                *curr_fname[NUM_FILE_TYPES];
-    char *              *FNames;         /* array of input files */
+    struct fname_item   *FNames;         /* array of input files */
     unsigned            cnt_fnames;      /* items in FNames array */
     char                *IncludePath;
     struct qdesc        line_queue;      /* line queue */
@@ -933,6 +934,7 @@ extern void             OutputBinBytes( unsigned char* pBytes, uint_32 len );
 //extern void             OutputCodeByte( unsigned char );
 extern void             FillDataBytes( unsigned char, int len );
 extern void             OutputBytes( const unsigned char *, int len, struct fixup * );
+extern void             OutputInterleavedBytes( const unsigned char *, int len, struct fixup * );
 #ifdef __SW_BD
 extern int  __stdcall   AssembleModule( const char * );
 #else

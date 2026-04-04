@@ -1348,7 +1348,7 @@ void cv_write_debug_tables(struct dsym* symbols, struct dsym* types, void* pv)
 
 		cv.files = LclAlloc(ModuleInfo.g.cnt_fnames * sizeof(cv_file));
 		for (i = 0; i < ModuleInfo.g.cnt_fnames; i++) {
-			cv.files[i].name = ModuleInfo.g.FNames[i];
+			cv.files[i].name = ModuleInfo.g.FNames[i].fname;
 			cv.files[i].offset = 0;
 		}
 

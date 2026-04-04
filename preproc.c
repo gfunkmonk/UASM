@@ -1128,23 +1128,23 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
 		// Hll and Object style call expansion is only valid inside a code section, AND if the line contains ( ) or ->.
 		if (CurrSeg && (strcmp(CurrSeg->sym.name, "_TEXT") == 0 || strcmp(CurrSeg->sym.name, "_flat") == 0) && PossibleCallExpansion( tokenarray ))
 		{
-			strcpy(&cline, line);
-			ExpandStaticObjCalls(&cline, tokenarray);
-			if (strcmp(&cline, line) != 0)
+			strcpy(cline, line);
+			ExpandStaticObjCalls(cline, tokenarray);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
-			ExpandObjCalls(&cline, tokenarray);
-			if (strcmp(&cline, line) != 0)
+			ExpandObjCalls(cline, tokenarray);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
-			ExpandHllCalls(&cline, tokenarray, FALSE, 0, FALSE);
-			if (strcmp(&cline, line) != 0)
+			ExpandHllCalls(cline, tokenarray, FALSE, 0, FALSE);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
 		}
