@@ -3146,7 +3146,7 @@ static int ParamIsString(char *pStr, int param, struct dsym* proc) {
 			if (p->sym.target_type)
 			{
 				type = p->sym.target_type;
-				while (type->target_type && (int)type->target_type > 0x2000)
+				while (type->target_type && (size_t)type->target_type > 0x2000)
 				{
 					type = type->target_type;
 					if (type->mem_type == MT_PTR)
