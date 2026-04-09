@@ -10,6 +10,7 @@
 
 #include <ctype.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include "globals.h"
 #include "memalloc.h"
@@ -240,21 +241,21 @@ static void ExpandObjCalls(char *line, struct asm_tok tokenarray[])
 					if (derefCount == 0)
 					{
 						sym = SymCheck(tokenarray[i - 1].string_ptr);
-						if (sym && sym->sym.target_type && sym->sym.target_type > 0x200000 && sym->sym.target_type->isClass)
+						if (sym && sym->sym.target_type && (uintptr_t)sym->sym.target_type > 0x200000 && sym->sym.target_type->isClass)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
 							type = sym->sym.target_type;
 							firstDeRefIdx = i - 2; /* pointer->item */
 						}
-						else if (sym && sym->sym.type && sym->sym.type->target_type && sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isClass)
+						else if (sym && sym->sym.type && sym->sym.type->target_type && (uintptr_t)sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isClass)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
 							type = sym->sym.type->target_type;
 							firstDeRefIdx = i - 2; /* pointer->item */
 						}
-						else if (sym && sym->sym.type && sym->sym.type->target_type && sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isPtrTable)
+						else if (sym && sym->sym.type && sym->sym.type->target_type && (uintptr_t)sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isPtrTable)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
@@ -316,9 +317,9 @@ static void ExpandObjCalls(char *line, struct asm_tok tokenarray[])
 						if (gotField)
 						{
 							type = field->sym.target_type;
-							if (!type || type < 0x10)
+							if (!type || (uintptr_t)type < 0x10)
 								type = field->sym.type->target_type;
-							if (!type || type < 0x10)
+							if (!type || (uintptr_t)type < 0x10)
 								EmitError(INVALID_POINTER);
 						}
 						else

@@ -1167,8 +1167,6 @@ continue_scan:
  * varname.abc -> . is an operator
  */
 
-#define is_valid_id_start( ch )  ( islalpha(ch) || ch=='_' || ch=='@' || ch=='$' || ch=='?' )
-
 ret_code GetToken( struct asm_tok token[], struct line_status *p )
 /****************************************************************/
 {
