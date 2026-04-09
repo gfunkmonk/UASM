@@ -46,59 +46,10 @@ enum unary_operand_types {
 #undef res
 };
 
-/* v2.06: the following operand combinations are used
-* inside InstrTable[] only, they don't need to be known
-* by the parser.
-*/
-enum operand_sets {
-  OP_R_MS = (OP_R | OP_MS),
-  OP_R8_M08 = (OP_R8 | OP_M08),
-  OP_RGT8_MS = (OP_RGT8 | OP_MS),
-  OP_RGT8_MGT8 = (OP_RGT8 | OP_MGT8),
-  OP_RMGT16 = (OP_RGT16 | OP_MGT16),
-  OP_RGT16_M08 = (OP_RGT16 | OP_M08),
-  OP_R16_R32 = (OP_R16 | OP_R32),
-  OP_R16_M16 = (OP_R16 | OP_M16),
-  OP_R32_M08 = (OP_R32 | OP_M08),
-  OP_R32_M16 = (OP_R32 | OP_M16),
-  OP_R32_M32 = (OP_R32 | OP_M32),
-#if AMD64_SUPPORT
-  OP_R16_R64 = (OP_R16 | OP_R64),
-  OP_R64_M64 = (OP_R64 | OP_M64),
-  OP_M16_M64 = (OP_M16 | OP_M64),
-#endif
-  OP_M16_M32 = (OP_M16 | OP_M32),
-  OP_MMX_M64 = (OP_MMX | OP_M64),
-  OP_XMM_M08 = (OP_XMM | OP_M08),
-  OP_YMM_M08 = (OP_YMM | OP_M08),
-  OP_ZMM_M08 = (OP_ZMM | OP_M08),
-  OP_XMM_M16 = (OP_XMM | OP_M16),
-  OP_YMM_M16 = (OP_YMM | OP_M16),
-  OP_ZMM_M16 = (OP_ZMM | OP_M16),
-  OP_XMM_M32 = (OP_XMM | OP_M32),
-  //OP_YMM_M32 = (OP_YMM | OP_M32),
-  //OP_ZMM_M32 = (OP_ZMM | OP_M32),
-  OP_XMM_M64 = (OP_XMM | OP_M64),
-  //OP_YMM_M64 = (OP_YMM | OP_M64),
-  //OP_ZMM_M64 = (OP_ZMM | OP_M64),
-  OP_XMM_M128 = (OP_XMM | OP_M128),
-  OP_BND_MS   = (OP_BND | OP_MS),
-  OP_BND_M128 = (OP_BND | OP_M128),
-#if MASM_SSE_MEMX
-  /* extended Masm syntax: sometimes Masm accepts 2 mem types
-  * for the memory operand, although the mem access will always
-  * be QWORD/OWORD.
-  */
-  OP_MMX_M64_08 = (OP_MMX | OP_M64 | OP_M08),
-  OP_MMX_M64_16 = (OP_MMX | OP_M64 | OP_M16),
-  OP_MMX_M64_32 = (OP_MMX | OP_M64 | OP_M32),
-
-  OP_XMM_M128_08 = (OP_XMM | OP_M128 | OP_M08),
-  OP_XMM_M128_16 = (OP_XMM | OP_M128 | OP_M16),
-  OP_XMM_M128_32 = (OP_XMM | OP_M128 | OP_M32),
-  OP_XMM_M128_64 = (OP_XMM | OP_M128 | OP_M64),
-#else
-  /* see macro OpCls() below */
+/* when MASM_SSE_MEMX is disabled, redirect extended operand class indices
+ * to their non-extended equivalents (see OpCls macro usage in instruct.h).
+ */
+#if !MASM_SSE_MEMX
 #define OPC_MMXMMX_M64_08NONE  OPC_MMXMMX_M64NONE
 #define OPC_MMXMMX_M64_16NONE  OPC_MMXMMX_M64NONE
 #define OPC_MMXMMX_M64_32NONE  OPC_MMXMMX_M64NONE
@@ -108,37 +59,6 @@ enum operand_sets {
 #define OPC_XMMXMM_M128_32NONE OPC_XMMXMM_M128NONE
 #define OPC_XMMXMM_M128_64NONE OPC_XMMXMM_M128NONE
 #endif
-#if AVXSUPP
-  OP_K_M08 = (OP_K | OP_M08),
-  OP_K_M16 = (OP_K | OP_M16),
-  OP_K_M32 = (OP_K | OP_M32),
-  OP_K_M64 = (OP_K | OP_M64),
-  OP_K_MS  = (OP_K | OP_MS),
-  OP_YMM_M256 = (OP_YMM | OP_M256),
-  OP_ZMM_M512 = (OP_ZMM | OP_M512),
-  OP_YMM_M32 = (OP_YMM | OP_M32),
-  OP_YMM_M64 = (OP_YMM | OP_M64),
-  OP_ZMM_M32 = (OP_ZMM | OP_M32),
-  OP_ZMM_M64 = (OP_ZMM | OP_M64),
-  OP_XMM_M256= (OP_XMM | OP_M256),
-  OP_XMM_M_ANY = (OP_XMM | OP_M_ANY),
-  OP_XMM_M128_M32 = (OP_XMM | OP_M128 | OP_M32),
-  OP_YMM_M256_M32 = (OP_YMM | OP_M256 | OP_M32),
-  OP_ZMM_M512_M32 = (OP_ZMM | OP_M512 | OP_M32),
-  OP_YMM_M128_M32 = (OP_YMM | OP_M128 | OP_M32),
-  OP_ZMM_M128_M32 = (OP_ZMM | OP_M128 | OP_M32),
-  OP_XMM_M128_M64 = (OP_XMM | OP_M128 | OP_M64),
-  OP_YMM_M128_M64 = (OP_YMM | OP_M128 | OP_M64),
-  OP_ZMM_M128_M64 = (OP_ZMM | OP_M128 | OP_M64),
-  OP_YMM_M256_M64 = (OP_YMM | OP_M256 | OP_M64),
-  OP_ZMM_M512_M64 = (OP_ZMM | OP_M512 | OP_M64),
-  //OP_ZMM_ZMM_ZMM_M512=(OP_ZMM | OP_ZMM | OP_ZMM_M512),
-  OP_YMM_M128     = (OP_YMM | OP_M128),
-  OP_ZMM_M128     = (OP_ZMM | OP_M128),
-  OP_ZMM_M256     = (OP_ZMM | OP_M256),
-
-#endif
-};
 
 /* v2.06: operand types have been removed from InstrTable[], they
 * are stored now in their own table, opnd_clstab[], below.
