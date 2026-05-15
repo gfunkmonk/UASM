@@ -30,6 +30,7 @@
 #include "mangle.h"
 #include "extern.h"
 #endif
+#include "fixup.h"
 #include "proc.h"
 
 #if defined(WINDOWSDDK)
@@ -3145,7 +3146,7 @@ static int ParamIsString(char *pStr, int param, struct dsym* proc) {
 			if (p->sym.target_type)
 			{
 				type = p->sym.target_type;
-				while (type->target_type && (int)type->target_type > 0x2000)
+				while (type->target_type && (size_t)type->target_type > 0x2000)
 				{
 					type = type->target_type;
 					if (type->mem_type == MT_PTR)
@@ -3192,8 +3193,8 @@ static int ParamIsString(char *pStr, int param, struct dsym* proc) {
 static unsigned int hashpjw(const char *s)
 /******************************************/
 {
-	uint_64 fnv_basis = 14695981039346656037;
-	uint_64 register fnv_prime = 1099511628211;
+	uint_64 fnv_basis = 14695981039346656037ULL;
+	uint_64 register fnv_prime = 1099511628211ULL;
 	uint_64 h;
 	for (h = fnv_basis; *s; ++s) {
 		h ^= (*s | ' ');

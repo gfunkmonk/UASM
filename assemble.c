@@ -1039,7 +1039,7 @@ static void PassOneChecks( void )
          */
 #if FASTPASS
         /* UASM 2.55 , altname is set to 1 when the type is undefined */
-        if ( curr->sym.altname > 1 ) 
+        if ( (size_t)curr->sym.altname > 1 ) 
 		{
             if ( curr->sym.altname->state == SYM_INTERNAL ) 
 			{
@@ -1798,7 +1798,7 @@ int EXPQUAL AssembleModule( const char *source )
 						printf("%u errors\n", ModuleInfo.g.error_count);
 						SetConsoleTextAttribute(hConsole, screenBufferInfo.wAttributes);
 			#else
-						printf(FWHT("%s: %lu lines, "), GetFNamePart(GetFName(ModuleInfo.srcfile)->fname), GetLineNumber());
+						printf(FWHT("%s: %u lines, "), GetFNamePart(GetFName(ModuleInfo.srcfile)->fname), GetLineNumber());
 						printf(FGRN("%u passes"), Parse_Pass + 1);
 						printf(", ");
 						printf(FCYN("%u ms"), endtime - starttime);

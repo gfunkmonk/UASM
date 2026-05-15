@@ -10,6 +10,7 @@
 
 #include <ctype.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include "globals.h"
 #include "memalloc.h"
@@ -240,21 +241,21 @@ static void ExpandObjCalls(char *line, struct asm_tok tokenarray[])
 					if (derefCount == 0)
 					{
 						sym = SymCheck(tokenarray[i - 1].string_ptr);
-						if (sym && sym->sym.target_type && sym->sym.target_type > 0x200000 && sym->sym.target_type->isClass)
+						if (sym && sym->sym.target_type && (uintptr_t)sym->sym.target_type > 0x200000 && sym->sym.target_type->isClass)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
 							type = sym->sym.target_type;
 							firstDeRefIdx = i - 2; /* pointer->item */
 						}
-						else if (sym && sym->sym.type && sym->sym.type->target_type && sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isClass)
+						else if (sym && sym->sym.type && sym->sym.type->target_type && (uintptr_t)sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isClass)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
 							type = sym->sym.type->target_type;
 							firstDeRefIdx = i - 2; /* pointer->item */
 						}
-						else if (sym && sym->sym.type && sym->sym.type->target_type && sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isPtrTable)
+						else if (sym && sym->sym.type && sym->sym.type->target_type && (uintptr_t)sym->sym.type->target_type > 0x200000 && sym->sym.type->target_type->isPtrTable)
 						{
 							foundType = TRUE;
 							pType = tokenarray[i - 1].string_ptr;
@@ -316,9 +317,9 @@ static void ExpandObjCalls(char *line, struct asm_tok tokenarray[])
 						if (gotField)
 						{
 							type = field->sym.target_type;
-							if (!type || type < 0x10)
+							if (!type || (uintptr_t)type < 0x10)
 								type = field->sym.type->target_type;
-							if (!type || type < 0x10)
+							if (!type || (uintptr_t)type < 0x10)
 								EmitError(INVALID_POINTER);
 						}
 						else
@@ -1128,23 +1129,23 @@ int PreprocessLine( char *line, struct asm_tok tokenarray[] )
 		// Hll and Object style call expansion is only valid inside a code section, AND if the line contains ( ) or ->.
 		if (CurrSeg && (strcmp(CurrSeg->sym.name, "_TEXT") == 0 || strcmp(CurrSeg->sym.name, "_flat") == 0) && PossibleCallExpansion( tokenarray ))
 		{
-			strcpy(&cline, line);
-			ExpandStaticObjCalls(&cline, tokenarray);
-			if (strcmp(&cline, line) != 0)
+			strcpy(cline, line);
+			ExpandStaticObjCalls(cline, tokenarray);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
-			ExpandObjCalls(&cline, tokenarray);
-			if (strcmp(&cline, line) != 0)
+			ExpandObjCalls(cline, tokenarray);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
-			ExpandHllCalls(&cline, tokenarray, FALSE, 0, FALSE);
-			if (strcmp(&cline, line) != 0)
+			ExpandHllCalls(cline, tokenarray, FALSE, 0, FALSE);
+			if (strcmp(cline, line) != 0)
 			{
-				strcpy(line, &cline);
+				strcpy(line, cline);
 				Token_Count = Tokenize(line, 0, tokenarray, TOK_RESCAN);
 			}
 		}

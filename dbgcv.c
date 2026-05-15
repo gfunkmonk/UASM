@@ -1261,7 +1261,9 @@ static uint_8* cv_FlushSection(dbgcv* cv, uint_32 signature, uint_32 ex)
 #define USEMD5
 
 #ifdef USEMD5
+#ifndef BUFSIZ
 #define BUFSIZ 1024*4
+#endif
 #define MD5_LENGTH ( sizeof( uint_32 ) + sizeof( uint_16 ) + 16 + sizeof( uint_16 ) )
 
 static int calc_md5(const char* filename, unsigned char* sum)
@@ -1348,7 +1350,7 @@ void cv_write_debug_tables(struct dsym* symbols, struct dsym* types, void* pv)
 
 		cv.files = LclAlloc(ModuleInfo.g.cnt_fnames * sizeof(cv_file));
 		for (i = 0; i < ModuleInfo.g.cnt_fnames; i++) {
-			cv.files[i].name = ModuleInfo.g.FNames[i];
+			cv.files[i].name = ModuleInfo.g.FNames[i].fname;
 			cv.files[i].offset = 0;
 		}
 

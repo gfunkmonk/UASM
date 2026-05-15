@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#if !defined( BOOL_DEFINED )  &&  !defined( bool ) && !(__WATCOMC__ >= 1070 && defined(__cplusplus))
+#if !defined( BOOL_DEFINED )  &&  !defined( bool ) && !(__WATCOMC__ >= 1070 && defined(__cplusplus)) && !(defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
     #define BOOL_DEFINED
     #include <stdbool.h>
 #endif
